@@ -144,7 +144,7 @@ function triggerViolationExample() {
 // What bug does concatenates string "5" instead of adding numeric 5
 function applyBonusTreatBug() {
   var previousHappiness = currentPet.happiness;
-  currentPet.happiness = currentPet.happiness + "5";
+  currentPet.happiness = currentPet.happiness + 5;
   updatePetMessage("Bonus treat applied to " + currentPet.name + "!");
   updateActivePetDisplay();
   console.log("[BonusBug] Happiness changed from", previousHappiness, "to", currentPet.happiness);
