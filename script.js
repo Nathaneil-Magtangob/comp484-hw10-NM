@@ -1,5 +1,8 @@
 $(function() { // Makes sure that your function is called once all the DOM elements of the page are ready to be used.
     
+    // Run structured console logging demonstrations on load
+    logDevToolsExamples();
+
     // Called function to update the name, happiness, and weight of our pet in our HTML
     // Initial update to render the first pet
     updateActivePetDisplay();
@@ -10,12 +13,19 @@ $(function() { // Makes sure that your function is called once all the DOM eleme
     $('.exercise-button').click(clickedExerciseButton);
     $('.sleep-button').click(clickedSleepButton);
 
+    // DevTools Lab event listeners
+    $('.trigger-404-btn').click(trigger404Error);
+    $('.trigger-typeerror-btn').click(triggerTypeErrorExample);
+    $('.trigger-violation-btn').click(triggerViolationExample);
+    $('.trigger-bug-btn').click(applyBonusTreatBug);
+
     // Event listener for switching between multiple pets
     $('.switch-pet-btn').click(function() {
       currentPetIndex = $(this).data('index');
       currentPet = pets[currentPetIndex];
       updateActivePetDisplay();
       updatePetMessage("Switched to " + currentPet.name + "!");
+      console.info("[PetSwitch] Active pet changed to:", currentPet.name);
     });
 
     // Unique JQuery Methods
@@ -75,6 +85,70 @@ var currentPet = pets[currentPetIndex];
 // Update the switch buttons in the HTML so they display the custom names chosen by the player
 $('.switch-pet-btn[data-index="0"]').text(pets[0].name);
 $('.switch-pet-btn[data-index="1"]').text(pets[1].name);
+
+// Console Message Logging Examples
+function logDevToolsExamples() {
+  console.log("[GigaPet] Initialized pet roster with", pets.length, "pets.");
+  console.info("[Info] Default active pet is", currentPet.name);
+  console.warn("[Warning] Keep an eye on energy levels before exercising!");
+  console.error("[ErrorDemo] Simulated diagnostic error for console filtering.");
+
+  console.table(pets.map(function(pet) {
+    return {
+      name: pet.name,
+      weight: pet.weight,
+      happiness: pet.happiness,
+      energy: pet.energy
+    };
+  }));
+
+  console.group("Active Pet Telemetry Group");
+  console.log("Pet Name:", currentPet.name);
+  console.log("Current Index:", currentPetIndex);
+  console.groupEnd();
+
+  console.log(
+    "%c Giga Pet DevTools Ready! %c Custom %c badge active",
+    "background: #1e2835; color: #ffcc00; font-weight: bold; padding: 3px 6px; border-radius: 3px;",
+    "color: #0b7285; font-weight: bold;",
+    "color: #2b8a3e; font-style: italic;"
+  );
+}
+
+// Browser-Logged Messages
+function trigger404Error() {
+  fetch("nonexistent-pet-config.json")
+    .then(function(response) {
+      if (!response.ok) {
+        console.warn("[404Handler] Missing resource status:", response.status);
+      }
+    });
+}
+
+function triggerTypeErrorExample() {
+  var uninitializedPet = null;
+  // Intentional TypeError: cannot read properties of null
+  return uninitializedPet.feed();
+}
+
+function triggerViolationExample() {
+  var start = performance.now();
+  // Intentional ~160ms synchronous loop to trigger a browser handler violation
+  while (performance.now() - start < 160) {
+    // Busy wait on main thread
+  }
+  console.log("[ViolationDemo] Completed heavy handler in", Math.round(performance.now() - start), "ms");
+}
+
+// Intentional Bug for Sources Panel Debugging
+// What bug does concatenates string "5" instead of adding numeric 5
+function applyBonusTreatBug() {
+  var previousHappiness = currentPet.happiness;
+  currentPet.happiness = currentPet.happiness + "5";
+  updatePetMessage("Bonus treat applied to " + currentPet.name + "!");
+  updateActivePetDisplay();
+  console.log("[BonusBug] Happiness changed from", previousHappiness, "to", currentPet.happiness);
+}
 
 function clickedTreatButton() {
   currentPet.happiness += 2;
